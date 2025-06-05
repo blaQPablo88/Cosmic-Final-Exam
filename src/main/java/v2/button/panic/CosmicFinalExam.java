@@ -16,6 +16,7 @@ public class CosmicFinalExam {
      */
     public static double tagIn(double balance) {
         // TODO: Implement tagIn fare deduction logic
+        if ( (balance - 12) < 0 ) throw new IllegalArgumentException( "Not enough funds" );
         return balance - 12;
     }
 
@@ -39,15 +40,16 @@ public class CosmicFinalExam {
     public static double tagOut(String destination, double balance) throws IllegalArgumentException {
         // TODO: Implement tagOut fare deduction logic based on destination
 
+        if ( (balance - 37) < 0 ) throw new IllegalArgumentException( "Not enough funds" );
 
-        if ( (balance - 8) < 0 ) throw new IllegalArgumentException( "Not enough funds" );
+        balance = tagIn( balance );
 
         return ( destination.equalsIgnoreCase( "Zenthros" ) ) ?
-                balance - 8 :
-                ( destination.equalsIgnoreCase( "Zenthros" ) ) ?
-                balance - 10 :
-                ( destination.equalsIgnoreCase( "Zenthros" ) ) ?
-                balance - 15 :
+                balance - 20 :
+                ( destination.equalsIgnoreCase( "Kryndor" ) ) ?
+                balance - 22 :
+                ( destination.equalsIgnoreCase( "Bryxaria" ) ) ?
+                balance - 27 :
                 balance; // Never happens
     }
 
@@ -64,6 +66,9 @@ public class CosmicFinalExam {
     /**
      * Compute the velocity of a spacecraft.
      * Formula: v = d / t
+     *
+     * Author's note:
+     *      Maybe you need to use a float, or the Author is dumb, One is true
      */
     public static double velocity(double distance, double time) {
         // TODO: Implement velocity calculation
@@ -92,6 +97,24 @@ public class CosmicFinalExam {
     public static boolean isPrime(int number) {
         // TODO: Refactor the provided isPrime method
         return false;
+    }
+
+    /**
+     * Write a function that display the orgling a cash denominations
+     * The denomination should be from top to bottom, Ignore decimal Values
+     *
+     * Orgling Denominations
+     * "A" = 10
+     * "B" = 15
+     * "Z" = 5
+     * "Y" = 1
+     *
+     * @param Orglings
+     * @return
+     */
+    public static String showOrglings( double Orglings ) {
+        // TODO: Implement this method
+        return "";
     }
 
     /**
