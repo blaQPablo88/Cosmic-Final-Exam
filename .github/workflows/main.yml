@@ -1,0 +1,148 @@
+name: Test Branch vs Main with Email Grading
+on:
+  push:
+    branches-ignore: [main]
+
+jobs:
+  test-and-grade:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Checkout main branch (for controlled pom.xml)
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: ./main
+
+      # 2. Checkout pushed branch
+      - name: Checkout new branch
+        uses: actions/checkout@v4
+        with:
+          path: ./new-branch
+
+      # 3. Setup Java with Temurin
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      # 4. Extract committer email securely
+      - name: Get committer info
+        id: git
+        run: |
+          cd ./new-branch
+          echo "::add-mask::$(git log -1 --pretty=format:'%ae')"
+          echo "email=$(git log -1 --pretty=format:'%ae')" >> $GITHUB_OUTPUT
+          echo "name=$(git log -1 --pretty=format:'%an')" >> $GITHUB_OUTPUT
+
+      # 5. Enforce main's pom.xml and run tests
+      - name: Run controlled tests
+        run: |
+          cp ./main/pom.xml ./new-branch/pom.xml
+          cd ./new-branch
+          mvn test --no-transfer-progress | tee mvn.log
+          echo "::group::Maven Test Logs"
+          cat mvn.log
+          echo "::endgroup::"
+
+      # 6. Parse test results with robust error handling
+      - name: Analyze results
+        id: results
+        run: |
+          cd ./new-branch
+          if [[ ! -d "target/surefire-reports" ]]; then
+            echo "::error::No test reports found!"
+            TOTAL=0
+            FAILED=0
+          else
+            TOTAL=$(grep -oPm1 '(?<=tests>)[0-9]+' target/surefire-reports/TEST-*.xml 2>/dev/null || echo "0")
+            FAILED=$(grep -oPm1 '(?<=failures>)[0-9]+' target/surefire-reports/TEST-*.xml 2>/dev/null || echo "0")
+          fi
+          PASSED=$((TOTAL - FAILED))
+
+          # Generate GitHub summary
+          echo "### Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ **Passed**: $PASSED" >> $GITHUB_STEP_SUMMARY
+          echo "- ❌ **Failed**: $FAILED" >> $GITHUB_STEP_SUMMARY
+          echo "- 📊 **Total**: $TOTAL" >> $GITHUB_STEP_SUMMARY
+
+          # Set dynamic message
+          if [[ $FAILED -gt 0 ]]; then
+            MESSAGE="❌ **$FAILED test(s) failed** - Please review the failures and try again!"
+            echo "::notice::Tests failed - sending notification"
+          elif [[ $TOTAL -eq 0 ]]; then
+            MESSAGE="⚠️ **No tests executed** - Check your test configuration"
+            echo "::warning::No tests were run"
+          else
+            MESSAGE="🎉 **All $TOTAL tests passed!** - Excellent work!"
+            echo "::notice::All tests passed"
+          fi
+
+          echo "total=$TOTAL" >> $GITHUB_OUTPUT
+          echo "passed=$PASSED" >> $GITHUB_OUTPUT
+          echo "failed=$FAILED" >> $GITHUB_OUTPUT
+          echo "message=$MESSAGE" >> $GITHUB_OUTPUT
+
+      # 7. Send professional email via SMTP
+      - name: Send grading email
+        if: always() # Send even if previous steps fail
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.SMTP_USERNAME }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+          subject: "Test Results: ${{ github.ref_name }} vs Main"
+          body: |
+            <html>
+            <body style="font-family: Arial, sans-serif; line-height: 1.6; max-width: 600px; margin: 0 auto;">
+              <div style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
+                <h2 style="color: #2c3e50; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+                  🧪 Test Grading Report
+                </h2>
+                
+                <div style="margin: 15px 0;">
+                  <p>Hello <strong>${{ steps.git.outputs.name }}</strong>,</p>
+                  <p>Here are your test results comparing <strong>${{ github.ref_name }}</strong> against the <code>main</code> branch:</p>
+                </div>
+
+                <div style="background: white; padding: 15px; border-radius: 5px; border-left: 4px solid ${{ steps.results.outputs.failed != '0' && '#e74c3c' || '#2ecc71' }};">
+                  <h3 style="margin-top: 0;">Summary</h3>
+                  <ul style="padding-left: 20px;">
+                    <li>✅ <strong>Passed:</strong> ${{ steps.results.outputs.passed }}</li>
+                    <li>❌ <strong>Failed:</strong> ${{ steps.results.outputs.failed }}</li>
+                    <li>📊 <strong>Total Tests:</strong> ${{ steps.results.outputs.total }}</li>
+                  </ul>
+                  <p style="font-weight: bold; color: ${{ steps.results.outputs.failed != '0' && '#e74c3c' || '#2ecc71' }};">
+                    ${{ steps.results.outputs.message }}
+                  </p>
+                </div>
+
+                <div style="margin-top: 20px; font-size: 0.9em; color: #7f8c8d;">
+                  <p>
+                    <a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" 
+                       style="color: #3498db; text-decoration: none;">
+                      🔍 View detailed test logs
+                    </a>
+                  </p>
+                  <p>Branch: <code>${{ github.ref_name }}</code></p>
+                  <p>Triggered by: ${{ github.actor }}</p>
+                </div>
+              </div>
+            </body>
+            </html>
+          to: ${{ steps.git.outputs.email }}
+          from: "Automated Test Grader <${{ secrets.SMTP_USERNAME }}>"
+          content_type: text/html
+          convert_markdown: false
+
+      # 8. Upload test reports as artifacts (optional)
+      - name: Archive test reports
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-reports-${{ github.ref_name }}
+          path: |
+            ./new-branch/target/surefire-reports
+            ./new-branch/mvn.log
