@@ -81,9 +81,14 @@ public class CosmicFinalExam {
      * You may not change logic, only clarity and structure.
      */
     public static boolean isPrime(int number) {
-        // TODO: Refactor the provided isPrime method
-        return false;
+        if (number < 2) return false;
+        if (number % 2 == 0) return false;
+        for (int i = 3; i * i < number; i += 2) {
+            if (number % i == 0) return false;
+        }
+        return true;
     }
+
 
     /**
      * Write a function that display the orgling a cash denominations
