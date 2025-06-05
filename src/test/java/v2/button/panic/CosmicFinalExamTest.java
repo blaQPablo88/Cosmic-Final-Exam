@@ -58,7 +58,7 @@ public class CosmicFinalExamTest {
     }
 
     @Test
-    public void testTransferRejectsNegativeBalances() {
+    void testTransferRejectsNegativeBalances() {
         // Case 1: Sufficient balance (normal case)
         assertEquals(48.0, CosmicFinalExam.transfer(50.0), 0.001 );
         // Case 2: Exact deduction (balance = 2)
@@ -80,7 +80,7 @@ public class CosmicFinalExamTest {
     }
 
     @Test
-    public void testTagInRejectsNegativeBalances() {
+    void testTagInRejectsNegativeBalances() {
         // Case 1: Sufficient balance (normal case)
         assertEquals(88.0, CosmicFinalExam.tagIn(100.0),
                 "Should deduct 12 from 100 → 88");
@@ -105,7 +105,7 @@ public class CosmicFinalExamTest {
     }
 
     @Test
-    public void testTagOutDeductsDestinationFare() {
+    void testTagOutDeductsDestinationFare() {
         // Case 1: Zenthros (20 orglings)
         assertEquals(68.0, CosmicFinalExam.tagOut("Zenthros", 100.0),
                 "100 - 12 (tagIn) - 20 (Zenthros) = 68");
@@ -120,7 +120,7 @@ public class CosmicFinalExamTest {
     }
 
     @Test
-    public void testTagOutRejectsNegativeBalances() {
+    void testTagOutRejectsNegativeBalances() {
         // Case 4: Insufficient funds for Zenthros (12 + 20 = 32 needed)
         assertThrows(IllegalArgumentException.class, () -> {
             CosmicFinalExam.tagOut("Zenthros", 31.9);
@@ -132,14 +132,14 @@ public class CosmicFinalExamTest {
     }
 
     @Test
-    public void testTagOutCaseInsensitiveDestination() {
+    void testTagOutCaseInsensitiveDestination() {
         // Case 6: Case-insensitive destination (e.g., "zEnThRoS")
         assertEquals(68.0, CosmicFinalExam.tagOut("zEnThRoS", 100.0),
                 "Should handle case-insensitive destinations");
     }
 
     @Test
-    public void testLawOfGravityStandardCase() {
+    void testLawOfGravityStandardCase() {
         double G = 6.67430e-11;
         double earthMass = 5.972e24;   // kg
         double moonMass = 7.342e22;    // kg
@@ -153,14 +153,14 @@ public class CosmicFinalExamTest {
     }
 
     @Test
-    public void testLawOfGravityZeroMass() {
+    void testLawOfGravityZeroMass() {
         // Case: One mass is zero → Force should be zero
         assertEquals(0.0, CosmicFinalExam.lawOfGravity(0.0, 10.0, 5.0),
                 "If m1=0, force should be 0");
     }
 
     @Test
-    public void testLawOfGravityZeroDistance() {
+    void testLawOfGravityZeroDistance() {
         // Case: Distance is zero → Should throw (division by zero)
         assertThrows(IllegalArgumentException.class, () -> {
             CosmicFinalExam.lawOfGravity(10.0, 20.0, 0.0);
@@ -168,7 +168,7 @@ public class CosmicFinalExamTest {
     }
 
     @Test
-    public void testLawOfGravitySmallValues() {
+    void testLawOfGravitySmallValues() {
         // Case: Tiny masses/distance (precision handling)
         double G = 6.67430e-11;
         double result = CosmicFinalExam.lawOfGravity(1e-10, 1e-10, 1e-5);
@@ -178,7 +178,7 @@ public class CosmicFinalExamTest {
     }
 
     @Test
-    public void testVelocityStandardCase() {
+    void testVelocityStandardCase() {
         // Case 1: Normal values (d=100m, t=10s → v=10m/s)
         assertEquals(10.0, CosmicFinalExam.velocity(100.0, 10.0));
 
@@ -190,7 +190,7 @@ public class CosmicFinalExamTest {
     }
 
     @Test
-    public void testVelocityRejectsZeroTime() {
+    void testVelocityRejectsZeroTime() {
         // Case 4: Time = 0 → Throw exception
         assertThrows(IllegalArgumentException.class, () -> {
             CosmicFinalExam.velocity(50.0, 0.0);
@@ -203,7 +203,7 @@ public class CosmicFinalExamTest {
     }
 
     @Test
-    public void testVelocityExtremeValues() {
+    void testVelocityExtremeValues() {
         // Case 6: Very large distance/small time
         assertEquals(1e10, CosmicFinalExam.velocity(1e20, 1e10));
 
@@ -212,7 +212,7 @@ public class CosmicFinalExamTest {
     }
 
     @Test
-    public void testCaesarCipherStandardCase() {
+    void testCaesarCipherStandardCase() {
         // Case 1: Basic shift (shift=3)
         assertEquals("Khoor", CosmicFinalExam.caesarCipher("Hello", 3));
 
@@ -224,7 +224,7 @@ public class CosmicFinalExamTest {
     }
 
     @Test
-    public void testCaesarCipherEdgeCases() {
+    void testCaesarCipherEdgeCases() {
         // Case 4: Empty string
         assertEquals("", CosmicFinalExam.caesarCipher("", 5));
 
@@ -239,7 +239,7 @@ public class CosmicFinalExamTest {
     }
 
     @Test
-    public void testCaesarCipherNegativeShift() {
+    void testCaesarCipherNegativeShift() {
         // Case 8: Negative shift (shift=-3)
         assertEquals("Ebiil", CosmicFinalExam.caesarCipher("Hello", -3));
 
@@ -248,7 +248,7 @@ public class CosmicFinalExamTest {
     }
 
     @Test
-    public void testDrawPyramidStandardCase() {
+    void testDrawPyramidStandardCase() {
         // Redirect System.out to capture output
         ByteArrayOutputStream outContent = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outContent));
@@ -267,7 +267,7 @@ public class CosmicFinalExamTest {
     }
 
     @Test
-    public void testDrawPyramidHeightOne() {
+    void testDrawPyramidHeightOne() {
         ByteArrayOutputStream outContent = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outContent));
 
@@ -277,7 +277,7 @@ public class CosmicFinalExamTest {
     }
 
     @Test
-    public void testDrawPyramidLarge() {
+    void testDrawPyramidLarge() {
         ByteArrayOutputStream outContent = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outContent));
 
@@ -303,7 +303,7 @@ public class CosmicFinalExamTest {
     }
 
     @Test
-    public void testDrawPyramidZeroHeight() {
+    void testDrawPyramidZeroHeight() {
         ByteArrayOutputStream outContent = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outContent));
 
@@ -313,7 +313,7 @@ public class CosmicFinalExamTest {
     }
 
     @Test
-    public void testDrawPyramidRejectsNegativeHeight() {
+    void testDrawPyramidRejectsNegativeHeight() {
         // Case 4: height=-1 → throws exception
         assertThrows(IllegalArgumentException.class, () -> {
             CosmicFinalExam.drawPyramid(-1);
@@ -321,7 +321,7 @@ public class CosmicFinalExamTest {
     }
 
     @Test
-    public void testIsPrimeStandardCases() {
+    void testIsPrimeStandardCases() {
         // Small primes
         assertTrue(CosmicFinalExam.isPrime(2));
         assertTrue(CosmicFinalExam.isPrime(3));
@@ -334,7 +334,7 @@ public class CosmicFinalExamTest {
     }
 
     @Test
-    public void testIsPrimeEdgeCases() {
+    void testIsPrimeEdgeCases() {
         // Numbers ≤1
         assertFalse(CosmicFinalExam.isPrime(1));
         assertFalse(CosmicFinalExam.isPrime(0));
@@ -346,7 +346,7 @@ public class CosmicFinalExamTest {
     }
 
     @Test
-    public void testIsPrimePerformance() {
+    void testIsPrimePerformance() {
         // Verify efficiency (should handle large numbers without delay)
         long startTime = System.nanoTime();
         assertTrue(CosmicFinalExam.isPrime(1_000_003));
@@ -354,6 +354,75 @@ public class CosmicFinalExamTest {
         assertTrue(duration < 1_000_000_000, "Should complete within 1 second");
     }
 
+    @Test
+    void testOrglingPresentationEasy() {
+    // Orglings are dumb, so do not expect this to make sense
+    String result;
 
+    result = CosmicFinalExam.showOrglings(0);
+    assertEquals("", result); // No value to convert
+
+    result = CosmicFinalExam.showOrglings(1);
+    assertEquals("Y", result); // Single unit
+
+    result = CosmicFinalExam.showOrglings(2);
+    assertEquals("YY", result); // 1 + 1
+
+    result = CosmicFinalExam.showOrglings(5);
+    assertEquals("Z", result); // Exact match with Z
+
+    result = CosmicFinalExam.showOrglings(9);
+    assertEquals("ZYYYY", result); // 5 + 4*1
+
+    result = CosmicFinalExam.showOrglings(4);
+    assertEquals("YYYY", result); // Just Ys
+
+    result = CosmicFinalExam.showOrglings(14);
+    assertEquals("AZYYYY", result); // 10 + 5 = 15 → too much → must be 10 + 1 + 1 + 1 + 1
+    assertEquals("AYYYY", CosmicFinalExam.showOrglings(14));
+}
+
+
+    @Test
+    void testOrglingPresentationMedium() {
+        String result;
+
+        result = CosmicFinalExam.showOrglings(27);
+        assertEquals("BAYY", result); // 15 + 10 + 1 + 1
+
+        result = CosmicFinalExam.showOrglings(20);
+        assertEquals("BZ", result); // 15 + 5
+
+        result = CosmicFinalExam.showOrglings(11);
+        assertEquals("AY", result); // 10 + 1
+
+        result = CosmicFinalExam.showOrglings(5);
+        assertEquals("Z", result); // Just one Z
+    }
+
+    @Test
+    void testOrglingPresentationHard() {
+        String result;
+
+        result = CosmicFinalExam.showOrglings(56);
+        assertEquals("BBBAAYY", result); 
+
+        result = CosmicFinalExam.showOrglings(56);
+        assertEquals("BBAAY", result); // 15 + 15 + 10 + 10 + 1 + 1
+
+        result = CosmicFinalExam.showOrglings(100);
+        // Try 15*6 = 90, then 10 = 100 → "BBBBBBA"
+        assertEquals("BBBBBBA", result);
+
+        result = CosmicFinalExam.showOrglings(3);
+        assertEquals("YYY", result); // 1 + 1 + 1
+
+        result = CosmicFinalExam.showOrglings(99);
+        // 15*6 = 90, then 5 = 95, 1*4 = 99 → "BBBBBBZYYYY"
+        assertEquals("BBBBBBZYYYY", result);
+    }
+
+
+    // Arigato...
 
 }

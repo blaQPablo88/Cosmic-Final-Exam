@@ -7,7 +7,6 @@ public class CosmicFinalExam {
      */
     public static void welcome(int n) {
         // TODO: Implement method to print "Fanta" n times
-        for ( int i = 0 ; i < n ; i++ ) System.out.println( "Fanta" );
     }
 
     /**
@@ -16,8 +15,7 @@ public class CosmicFinalExam {
      */
     public static double tagIn(double balance) {
         // TODO: Implement tagIn fare deduction logic
-        if ( (balance - 12) < 0 ) throw new IllegalArgumentException( "Not enough funds" );
-        return balance - 12;
+        return 0;
     }
 
     /**
@@ -25,8 +23,7 @@ public class CosmicFinalExam {
      */
     public static double transfer(double balance) {
         // TODO: Implement transfer fare deduction logic
-        if ( balance < 2 ) throw new IllegalArgumentException( "Not enough funds" );
-        return balance - 2;
+        return 0;
     }
 
     /**
@@ -39,18 +36,7 @@ public class CosmicFinalExam {
      */
     public static double tagOut(String destination, double balance) throws IllegalArgumentException {
         // TODO: Implement tagOut fare deduction logic based on destination
-
-        if ( (balance - 37) < 0 ) throw new IllegalArgumentException( "Not enough funds" );
-
-        balance = tagIn( balance );
-
-        return ( destination.equalsIgnoreCase( "Zenthros" ) ) ?
-                balance - 20 :
-                ( destination.equalsIgnoreCase( "Kryndor" ) ) ?
-                balance - 22 :
-                ( destination.equalsIgnoreCase( "Bryxaria" ) ) ?
-                balance - 27 :
-                balance; // Never happens
+        return 0;
     }
 
     /**
@@ -108,6 +94,10 @@ public class CosmicFinalExam {
      * "B" = 15
      * "Z" = 5
      * "Y" = 1
+     * 
+     * Sample Result
+     * showOrglings(27) = "BAYY"
+     * showOrglings(20) = "BZ"
      *
      * @param Orglings
      * @return
@@ -118,10 +108,41 @@ public class CosmicFinalExam {
     }
 
     /**
-     * Earn orglings from choices made. ESCAPE if total >= 50.
+     * <p>
+     * Calculates the total number of orglings earned based on a sequence of decisions.
+     * Each decision contributes a predefined number of orglings. The player is said
+     * to <strong>ESCAPE</strong> if the total orglings earned is <code>&gt;= 50</code>.
+     * Otherwise, the player remains <strong>TRAPPED</strong>.
+     * </p>
+     *
+     * <p><strong>Orgling Contribution Table:</strong></p>
+     * <ul>
+     *     <li><code>FIGHT</code>  - 15 orglings</li>
+     *     <li><code>HIDE</code>   - 5 orglings</li>
+     *     <li><code>RUN</code>    - 10 orglings</li>
+     *     <li><code>STEAL</code>  - 20 orglings</li>
+     *     <li><code>BRIBE</code>  - 8 orglings</li>
+     *     <li><code>WAIT</code>   - 0 orglings</li>
+     *     <li><code>CRY</code>    - -5 orglings (negative impact)</li>
+     * </ul>
+     *
+     * <p>
+     * Any unrecognized decision contributes 0 orglings by default.
+     * </p>
+     *
+     * <p><strong>Examples:</strong></p>
+     * <pre>
+     * getOut(new String[] {"FIGHT", "RUN", "HIDE"}) ➞ "TRAPPED"  (15 + 10 + 5 = 30)
+     * getOut(new String[] {"STEAL", "FIGHT", "BRIBE"}) ➞ "ESCAPE" (20 + 15 + 8 = 43 → still TRAPPED)
+     * getOut(new String[] {"STEAL", "STEAL", "FIGHT"}) ➞ "ESCAPE" (20 + 20 + 15 = 55)
+     * </pre>
+     *
+     * @param decisions An array of string decisions made by the player.
+     * @return "ESCAPE" if the total orglings are 50 or more, otherwise "TRAPPED".
      */
     public static String getOut(String[] decisions) {
-        // TODO: Implement orgling total calculation and return "ESCAPE" or "TRAPPED"
+        // TODO: Implement the logic using the orgling values listed above
         return "";
     }
+
 }
