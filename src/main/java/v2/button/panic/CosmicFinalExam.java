@@ -7,6 +7,7 @@ public class CosmicFinalExam {
      */
     public static void welcome(int n) {
         // TODO: Implement method to print "Fanta" n times
+        for ( int i = 0 ; i < n ; i++ ) System.out.println( "Fanta" );
     }
 
     /**
@@ -15,7 +16,7 @@ public class CosmicFinalExam {
      */
     public static double tagIn(double balance) {
         // TODO: Implement tagIn fare deduction logic
-        return 0;
+        return balance - 12;
     }
 
     /**
@@ -23,7 +24,7 @@ public class CosmicFinalExam {
      */
     public static double transfer(double balance) {
         // TODO: Implement transfer fare deduction logic
-        return 0;
+        return balance - 2;
     }
 
     /**
@@ -34,9 +35,15 @@ public class CosmicFinalExam {
      *   Bryxaria  - 27
      * Unknown    - 0 (only the initial 12 was deducted)
      */
-    public static double tagOut(String destination, double balance) {
+    public static double tagOut(String destination, double balance) throws IllegalArgumentException {
         // TODO: Implement tagOut fare deduction logic based on destination
-        return 0;
+        return ( destination.equalsIgnoreCase( "Zenthros" ) ) ?
+                balance - 8 :
+                ( destination.equalsIgnoreCase( "Zenthros" ) ) ?
+                balance - 10 :
+                ( destination.equalsIgnoreCase( "Zenthros" ) ) ?
+                balance - 25 :
+                throw new IllegalArgumentException( "Balance must not be negative!!" );
     }
 
     /**
