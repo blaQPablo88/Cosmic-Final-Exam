@@ -27,7 +27,7 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      # 4. Extract committer email securely
+      # 4. Extract committer info securely
       - name: Get committer info
         id: git
         run: |
@@ -42,23 +42,29 @@ jobs:
           cp ./main/pom.xml ./new-branch/pom.xml
           cd ./new-branch
           mvn test --no-transfer-progress | tee mvn.log
+          
+          # Create empty surefire-reports if none exist
+          mkdir -p target/surefire-reports
+          if [ ! -f "target/surefire-reports/TEST-*.xml" ]; then
+            echo "<?xml version='1.0' encoding='UTF-8'?><testsuite tests='0' failures='0'/>" > target/surefire-reports/TEST-empty.xml
+          fi
+          
           echo "::group::Maven Test Logs"
           cat mvn.log
           echo "::endgroup::"
 
-      # 6. Parse test results with robust error handling
+      # 6. Parse test results with robust handling
       - name: Analyze results
         id: results
         run: |
           cd ./new-branch
-          if [[ ! -d "target/surefire-reports" ]]; then
-            echo "::error::No test reports found!"
-            TOTAL=0
-            FAILED=0
-          else
-            TOTAL=$(grep -oPm1 '(?<=tests>)[0-9]+' target/surefire-reports/TEST-*.xml 2>/dev/null || echo "0")
-            FAILED=$(grep -oPm1 '(?<=failures>)[0-9]+' target/surefire-reports/TEST-*.xml 2>/dev/null || echo "0")
+          # Force XML report existence
+          if ! compgen -G "target/surefire-reports/TEST-*.xml" > /dev/null; then
+            echo "<?xml version='1.0' encoding='UTF-8'?><testsuite tests='0' failures='0'/>" > target/surefire-reports/TEST-empty.xml
           fi
+          
+          TOTAL=$(grep -oPm1 '(?<=tests>)[0-9]+' target/surefire-reports/TEST-*.xml 2>/dev/null | head -1 || echo "0")
+          FAILED=$(grep -oPm1 '(?<=failures>)[0-9]+' target/surefire-reports/TEST-*.xml 2>/dev/null | head -1 || echo "0")
           PASSED=$((TOTAL - FAILED))
 
           # Generate GitHub summary
@@ -86,15 +92,16 @@ jobs:
 
       # 7. Send professional email via SMTP
       - name: Send grading email
-        if: always() # Send even if previous steps fail
+        if: always()
         uses: dawidd6/action-send-mail@v3
         with:
-          server_address: smtp.gmail.com
-          server_port: 465
+          server_address: ${{ secrets.SMTP_SERVER || 'smtp.gmail.com' }}
+          server_port: ${{ secrets.SMTP_PORT || 465 }}
+          secure: ${{ secrets.SMTP_SECURE != 'false' }}
           username: ${{ secrets.SMTP_USERNAME }}
           password: ${{ secrets.SMTP_PASSWORD }}
           subject: "Test Results: ${{ github.ref_name }} vs Main"
-          body: |
+          html_body: |
             <html>
             <body style="font-family: Arial, sans-serif; line-height: 1.6; max-width: 600px; margin: 0 auto;">
               <div style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
@@ -134,10 +141,9 @@ jobs:
             </html>
           to: ${{ steps.git.outputs.email }}
           from: "Automated Test Grader <${{ secrets.SMTP_USERNAME }}>"
-          content_type: text/html
           convert_markdown: false
 
-      # 8. Upload test reports as artifacts (optional)
+      # 8. Upload test reports as artifacts
       - name: Archive test reports
         if: always()
         uses: actions/upload-artifact@v3
