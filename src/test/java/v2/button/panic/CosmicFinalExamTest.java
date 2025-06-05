@@ -3,6 +3,10 @@ import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -344,6 +348,32 @@ public class CosmicFinalExamTest {
         assertTrue(CosmicFinalExam.isPrime(7919));  // Known large prime
         assertFalse(CosmicFinalExam.isPrime(7920)); // 7920 = 2^4 × 3^2 × 5 × 11
     }
+
+    @Test
+    void testIsPrimeMethodLength() throws Exception {
+        Path path = Paths.get("src/main/java/v2/button/panic/CosmicFinalExam.java");
+        List<String> lines = Files.readAllLines(path);
+
+        boolean inMethod = false;
+        int charCount = 0;
+
+        for (String line : lines) {
+            if (line.contains("public static boolean isPrime")) {
+                inMethod = true;
+            }
+            if (inMethod) {
+                charCount += line.trim().length(); // Only count non-whitespace
+                if (line.trim().equals("}")) {
+                    break;
+                }
+            }
+        }
+
+        int allowedLimit = 280; // Customize this limit based on your intended restriction
+        assertTrue(charCount <= allowedLimit,
+                "The isPrime method exceeds the allowed character count. Found: " + charCount);
+    }
+
 
     @Test
     void testIsPrimePerformance() {
