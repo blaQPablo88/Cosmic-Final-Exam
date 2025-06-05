@@ -24,6 +24,7 @@ public class CosmicFinalExam {
      */
     public static double transfer(double balance) {
         // TODO: Implement transfer fare deduction logic
+        if ( balance < 2 ) throw new IllegalArgumentException( "Not enough funds" );
         return balance - 2;
     }
 
@@ -37,13 +38,17 @@ public class CosmicFinalExam {
      */
     public static double tagOut(String destination, double balance) throws IllegalArgumentException {
         // TODO: Implement tagOut fare deduction logic based on destination
+
+
+        if ( (balance - 8) < 0 ) throw new IllegalArgumentException( "Not enough funds" );
+
         return ( destination.equalsIgnoreCase( "Zenthros" ) ) ?
                 balance - 8 :
                 ( destination.equalsIgnoreCase( "Zenthros" ) ) ?
                 balance - 10 :
                 ( destination.equalsIgnoreCase( "Zenthros" ) ) ?
-                balance - 25 :
-                throw new IllegalArgumentException( "Balance must not be negative!!" );
+                balance - 15 :
+                balance; // Never happens
     }
 
     /**
