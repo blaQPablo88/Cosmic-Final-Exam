@@ -1,5 +1,27 @@
 package v2.button.panic;
 
+/**
+ * The CosmicFinalExam is a playful, intergalactic Java challenge set in a chaotic universe
+ * filled with dragons, orglings, spacecraft, and questionable life choices.
+ * 
+ * One key component is the Drakoris Dragon Transport Network — a mystical,
+ * cross-dimensional transit system where passengers ride dragons between cities
+ * like Zenthros, Kryndor, and Bryxaria. The network operates using a currency called
+ * orglings, which are deducted as passengers tag in, transfer, and tag out at their destinations.
+ * 
+ * This class includes methods to:
+ * - Interact with the dragon transport system (tagIn, transfer, tagOut)
+ * - Perform physics calculations (gravity, velocity)
+ * - Encrypt messages (Caesar Cipher)
+ * - Generate pyramids (Mario-style)
+ * - Decode fantasy currency denominations (showOrglings)
+ * - Evaluate decisions in high-stakes escape scenarios (getOut)
+ * 
+ * All of this unfolds in a cosmic panic button scenario where screaming "Fanta"
+ * might just save your life. Or not.
+ * 
+ */
+
 public class CosmicFinalExam {
 
     /**
