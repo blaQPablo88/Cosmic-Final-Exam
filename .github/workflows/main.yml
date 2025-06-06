@@ -2,6 +2,8 @@ name: Test Branch vs Main with Email Grading
 on:
   push:
     branches-ignore: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
   test-and-grade:
