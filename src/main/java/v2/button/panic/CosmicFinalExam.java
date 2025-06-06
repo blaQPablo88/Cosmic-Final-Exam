@@ -7,9 +7,6 @@ public class CosmicFinalExam {
      */
     public static void welcome(int n) {
         // TODO: Implement method to print "Fanta" n times
-        for( int i = 0 ; i < n ; i++ ) {
-            System.out.println( "Fanta" );
-        }
     }
 
     /**
