@@ -46,7 +46,8 @@ public class CosmicFinalExam {
      */
     public static double lawOfGravity(double m1, double m2, double r) {
         // TODO: Implement gravitational force calculation
-        return 0;
+        
+        return 6.67430e-11 * (m1 * m2) / (r * r);
     }
 
     /**
