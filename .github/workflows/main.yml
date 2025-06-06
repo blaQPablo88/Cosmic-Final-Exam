@@ -1,4 +1,5 @@
 name: Test Branch vs Main with Email Grading
+
 on:
   push:
     branches-ignore: [main]
@@ -44,13 +45,12 @@ jobs:
           cp ./main/pom.xml ./new-branch/pom.xml
           cd ./new-branch
           mvn test --no-transfer-progress | tee mvn.log
-          
-          # Create empty surefire-reports if none exist
+
           mkdir -p target/surefire-reports
           if [ ! -f "target/surefire-reports/TEST-*.xml" ]; then
             echo "<?xml version='1.0' encoding='UTF-8'?><testsuite tests='0' failures='0'/>" > target/surefire-reports/TEST-empty.xml
           fi
-          
+
           echo "::group::Maven Test Logs"
           cat mvn.log
           echo "::endgroup::"
@@ -60,22 +60,28 @@ jobs:
         id: results
         run: |
           cd ./new-branch
-          # Force XML report existence
+
           if ! compgen -G "target/surefire-reports/TEST-*.xml" > /dev/null; then
             echo "<?xml version='1.0' encoding='UTF-8'?><testsuite tests='0' failures='0'/>" > target/surefire-reports/TEST-empty.xml
           fi
-          
-          TOTAL=$(grep -oPm1 '(?<=tests>)[0-9]+' target/surefire-reports/TEST-*.xml 2>/dev/null | head -1 || echo "0")
-          FAILED=$(grep -oPm1 '(?<=failures>)[0-9]+' target/surefire-reports/TEST-*.xml 2>/dev/null | head -1 || echo "0")
+
+          echo "::group::Surefire XML Content"
+          cat target/surefire-reports/TEST-*.xml || echo "No XML files found"
+          echo "::endgroup::"
+
+          TOTAL=$(grep -oPm1 '(?<=tests>)[0-9]+' target/surefire-reports/TEST-*.xml 2>/dev/null | head -1)
+          TOTAL=${TOTAL:-0}
+
+          FAILED=$(grep -oPm1 '(?<=failures>)[0-9]+' target/surefire-reports/TEST-*.xml 2>/dev/null | head -1)
+          FAILED=${FAILED:-0}
+
           PASSED=$((TOTAL - FAILED))
 
-          # Generate GitHub summary
           echo "### Test Results" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ **Passed**: $PASSED" >> $GITHUB_STEP_SUMMARY
           echo "- ❌ **Failed**: $FAILED" >> $GITHUB_STEP_SUMMARY
           echo "- 📊 **Total**: $TOTAL" >> $GITHUB_STEP_SUMMARY
 
-          # Set dynamic message
           if [[ $FAILED -gt 0 ]]; then
             MESSAGE="❌ **$FAILED test(s) failed** - Please review the failures and try again!"
             echo "::notice::Tests failed - sending notification"
@@ -119,9 +125,9 @@ jobs:
                 <div style="background: white; padding: 15px; border-radius: 5px; border-left: 4px solid ${{ steps.results.outputs.failed != '0' && '#e74c3c' || '#2ecc71' }};">
                   <h3 style="margin-top: 0;">Summary</h3>
                   <ul style="padding-left: 20px;">
-                    <li>✅ <strong>Passed:</strong> ${{ steps.results.outputs.passed }}</li>
-                    <li>❌ <strong>Failed:</strong> ${{ steps.results.outputs.failed }}</li>
-                    <li>📊 <strong>Total Tests:</strong> ${{ steps.results.outputs.total }}</li>
+                    <li>✅ <strong>Passed:</strong> ${{ steps.results.outputs.passed || '0' }}</li>
+                    <li>❌ <strong>Failed:</strong> ${{ steps.results.outputs.failed || '0' }}</li>
+                    <li>📊 <strong>Total Tests:</strong> ${{ steps.results.outputs.total || '0' }}</li>
                   </ul>
                   <p style="font-weight: bold; color: ${{ steps.results.outputs.failed != '0' && '#e74c3c' || '#2ecc71' }};">
                     ${{ steps.results.outputs.message }}
