@@ -11,6 +11,8 @@ Before you begin:
 ### Why fork?  
 - Some tests must be run on the server to verify you haven't modified them for an unfair advantage.  
 - This project is also part of my Learning Management System (LMS) testing phase.  
+- This might not work for some of you that have their emails set as private, I do not recommend changing to public just be discliplined and avoid changing tests.  
+
 
 ## 🚀 Steps to Follow  
 
