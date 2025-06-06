@@ -29,28 +29,27 @@
     </dependencies>
 
     <build>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <version>${surefire.version}</version>
-            <configuration>
-                <printSummary>true</printSummary>
-                <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
-                <includes>
-                    <include>**/*Test.java</include>
-                    <include>**/*Tests.java</include>
-                </includes>
-                <systemPropertyVariables>
-                    <java.util.logging.manager>org.apache.logging.log4j.jul.LogManager</java.util.logging.manager>
-                </systemPropertyVariables>
-                <forkCount>1</forkCount>
-                <reuseForks>false</reuseForks>
-                <!-- Removed debugForkedProcess -->
-            </configuration>
-        </plugin>
-
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${surefire.version}</version>
+                <configuration>
+                    <printSummary>true</printSummary>
+                    <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+                    <includes>
+                        <include>**/*Test.java</include>
+                        <include>**/*Tests.java</include>
+                    </includes>
+                    <systemPropertyVariables>
+                        <java.util.logging.manager>org.apache.logging.log4j.jul.LogManager</java.util.logging.manager>
+                    </systemPropertyVariables>
+                    <forkCount>1</forkCount>
+                    <reuseForks>false</reuseForks>
+                    <!-- Removed debugForkedProcess -->
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
-
-    
-
 </project>
+
