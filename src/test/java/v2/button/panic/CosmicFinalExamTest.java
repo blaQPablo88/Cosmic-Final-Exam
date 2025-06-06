@@ -39,8 +39,10 @@ public class CosmicFinalExamTest {
         // Exact amount case
         assertEquals(0.0, CosmicFinalExam.tagIn(12.0), 0.001);
 
-        // Insufficient funds case (should go negative)
-        assertEquals(-12.0, CosmicFinalExam.tagIn(0.0), 0.001);
+        // Insufficient funds case (should NOT go negative)
+        assertThrows(IllegalArgumentException.class, () -> {
+            CosmicFinalExam.transfer(0.0);
+        }, "Should throw if balance < 12");
 
         // Large number case
         assertEquals(Double.MAX_VALUE - 12, CosmicFinalExam.tagIn(Double.MAX_VALUE), 0.001);
@@ -55,7 +57,9 @@ public class CosmicFinalExamTest {
         assertEquals(0.0, CosmicFinalExam.transfer(2.0), 0.001 );
 
         // Case 3: Insufficient funds (balance < 2)
-        assertEquals(-2.0, CosmicFinalExam.transfer(0.0), 0.001 );
+        assertThrows(IllegalArgumentException.class, () -> {
+            CosmicFinalExam.transfer(0.0);
+        }, "Should throw if balance < 2");
 
         // Case 4: Floating-point precision (e.g., 5.5 - 2)
         assertEquals(3.5, CosmicFinalExam.transfer(5.5), 0.001 );
@@ -107,38 +111,51 @@ public class CosmicFinalExamTest {
             CosmicFinalExam.tagIn(11.999);
         }, "Should throw if deduction would result in negative");
     }
-
     @Test
     void testTagOutDeductsDestinationFare() {
-        // Case 1: Zenthros (20 orglings)
-        assertEquals(68.0, CosmicFinalExam.tagOut("Zenthros", 100.0),
+        // Case 1: Zenthros (20 orglings) //Todo: tagging in while tagging out is not intuitive
+        assertEquals(80, CosmicFinalExam.tagOut("Zenthros", 100.0),
+                "100 - 20 (Zenthros) = 80");
+
+        // Case 2: Kryndor (22 orglings)
+        assertEquals(78.0, CosmicFinalExam.tagOut("Kryndor", 100.0),
+                "100 - 22 = 78");
+
+        // Case 3: Unknown destination (0 additional)
+        assertEquals(100.0, CosmicFinalExam.tagOut("Unknown", 100.0),
+                "100 - 0 = 100");
+    }
+    @Test
+    void testTagInAndTagOutDeductsDestinationFare() {
+        // Case 1: Zenthros (20 orglings) //Todo: tagging in while tagging out is not intuitive
+        assertEquals(68, CosmicFinalExam.tagOut("Zenthros", CosmicFinalExam.tagIn(100.0)),
                 "100 - 12 (tagIn) - 20 (Zenthros) = 68");
 
         // Case 2: Kryndor (22 orglings)
-        assertEquals(66.0, CosmicFinalExam.tagOut("Kryndor", 100.0),
+        assertEquals(66.0, CosmicFinalExam.tagOut("Kryndor", CosmicFinalExam.tagIn(100.0)),
                 "100 - 12 - 22 = 66");
 
         // Case 3: Unknown destination (0 additional)
-        assertEquals(88.0, CosmicFinalExam.tagOut("Unknown", 100.0),
+        assertEquals(88.0, CosmicFinalExam.tagOut("Unknown", CosmicFinalExam.tagIn(100.0)),
                 "100 - 12 - 0 = 88");
     }
 
     @Test
     void testTagOutRejectsNegativeBalances() {
-        // Case 4: Insufficient funds for Zenthros (12 + 20 = 32 needed)
+        // Case 4: Insufficient funds for Zenthros (20 needed)
         assertThrows(IllegalArgumentException.class, () -> {
-            CosmicFinalExam.tagOut("Zenthros", 31.9);
-        }, "Should throw if balance < 32");
+            CosmicFinalExam.tagOut("Zenthros", 19.9);
+        }, "Should throw if balance < 20");
 
-        // Case 5: Exact fare (balance = 12 + 27 = 39 for Bryxaria)
-        assertEquals(0.0, CosmicFinalExam.tagOut("Bryxaria", 39.0),
-                "39 - 12 - 27 = 0");
+        // Case 5: Exact fare (balance = 27 for Bryxaria)
+        assertEquals(0.0, CosmicFinalExam.tagOut("Bryxaria", 27.0),
+                "39- 27 = 0");
     }
 
     @Test
     void testTagOutCaseInsensitiveDestination() {
         // Case 6: Case-insensitive destination (e.g., "zEnThRoS")
-        assertEquals(68.0, CosmicFinalExam.tagOut("zEnThRoS", 100.0),
+        assertEquals(80.0, CosmicFinalExam.tagOut("zEnThRoS", 100.0),
                 "Should handle case-insensitive destinations");
     }
 
@@ -221,10 +238,12 @@ public class CosmicFinalExamTest {
         assertEquals("Khoor", CosmicFinalExam.caesarCipher("Hello", 3));
 
         // Case 2: Wrap-around (shift=5, 'V' → 'A')
-        assertEquals("Afdhf", CosmicFinalExam.caesarCipher("Vasco", 5));
+        //Todo s --> (s -> x? was d o ->t)
+        assertEquals("Afxht", CosmicFinalExam.caesarCipher("Vasco", 5));
 
         // Case 3: Mixed case and non-letters
-        assertEquals("Dpef 123!", CosmicFinalExam.caesarCipher("Bmcd 123!", 2));
+        //Todo (inconsistent counting)
+        assertEquals("Doef 123!", CosmicFinalExam.caesarCipher("Bmcd 123!", 2));
     }
 
     @Test
@@ -277,7 +296,9 @@ public class CosmicFinalExamTest {
 
         // Case 2: height=1
         CosmicFinalExam.drawPyramid(1);
+//        assertEquals("#\n", outContent.toString());
         assertEquals("#", outContent.toString());
+        //Todo: why expect a new line here on the last line but not on the previous one?
     }
 
     @Test
@@ -378,49 +399,54 @@ public class CosmicFinalExamTest {
     @Test
     void testIsPrimePerformance() {
         // Verify efficiency (should handle large numbers without delay)
-        long startTime = System.nanoTime();
-        long duration = System.nanoTime() - startTime;
-        
+
+
+
         // Run tests on efficiency multiple times to avoid lucky runs
+        long startTime = System.nanoTime();
         assertTrue(CosmicFinalExam.isPrime(1_000_003));
+        long duration = System.nanoTime() - startTime;
+        startTime = System.nanoTime();
         assertTrue(duration < 1_000_000_000, "Should complete within 1 second");
         assertTrue(CosmicFinalExam.isPrime(1_000_003));
+        duration = System.nanoTime() - startTime;
         assertTrue(duration < 1_000_000_000, "Should complete within 1 second");
+        startTime = System.nanoTime();
         assertTrue(CosmicFinalExam.isPrime(1_000_003));
+        duration = System.nanoTime() - startTime;
         assertTrue(duration < 1_000_000_000, "Should complete within 1 second");
     }
-    
+
     // There should be a test here to check initial character count and final character count
     // The Idea is I want you to solve this with as little changes as possible, and without
-    // applying a whole different method 
+    // applying a whole different method
 
     @Test
     void testOrglingPresentationEasy() {
-    // Orglings are dumb, so do not expect this to make sense
-    String result;
+        // Orglings are dumb, so do not expect this to make sense
+        String result;
 
-    result = CosmicFinalExam.showOrglings(0);
-    assertEquals("", result); // No value to convert
+        result = CosmicFinalExam.showOrglings(0);
+        assertEquals("", result); // No value to convert
 
-    result = CosmicFinalExam.showOrglings(1);
-    assertEquals("Y", result); // Single unit
+        result = CosmicFinalExam.showOrglings(1);
+        assertEquals("Y", result); // Single unit
 
-    result = CosmicFinalExam.showOrglings(2);
-    assertEquals("YY", result); // 1 + 1
+        result = CosmicFinalExam.showOrglings(2);
+        assertEquals("YY", result); // 1 + 1
 
-    result = CosmicFinalExam.showOrglings(5);
-    assertEquals("Z", result); // Exact match with Z
+        result = CosmicFinalExam.showOrglings(5);
+        assertEquals("Z", result); // Exact match with Z
 
-    result = CosmicFinalExam.showOrglings(9);
-    assertEquals("ZYYYY", result); // 5 + 4*1
+        result = CosmicFinalExam.showOrglings(9);
+        assertEquals("ZYYYY", result); // 5 + 4*1
 
-    result = CosmicFinalExam.showOrglings(4);
-    assertEquals("YYYY", result); // Just Ys
+        result = CosmicFinalExam.showOrglings(4);
+        assertEquals("YYYY", result); // Just Ys
 
-    result = CosmicFinalExam.showOrglings(14);
-    assertEquals("AZYYYY", result); // 10 + 5 = 15 → too much → must be 10 + 1 + 1 + 1 + 1
-    assertEquals("AYYYY", CosmicFinalExam.showOrglings(14));
-}
+        result = CosmicFinalExam.showOrglings(14);
+        assertEquals("AYYYY", CosmicFinalExam.showOrglings(14));
+    }
 
 
     @Test
@@ -445,10 +471,7 @@ public class CosmicFinalExamTest {
         String result;
 
         result = CosmicFinalExam.showOrglings(56);
-        assertEquals("BBBAAYY", result); 
-
-        result = CosmicFinalExam.showOrglings(56);
-        assertEquals("BBAAY", result); // 15 + 15 + 10 + 10 + 1 + 1
+        assertEquals("BBBAY", result); // 15 + 15 + 15 + 10  + 1
 
         result = CosmicFinalExam.showOrglings(100);
         // Try 15*6 = 90, then 10 = 100 → "BBBBBBA"
