@@ -277,7 +277,7 @@ public class CosmicFinalExamTest {
 
         // Case 2: height=1
         CosmicFinalExam.drawPyramid(1);
-        assertEquals("#\n", outContent.toString());
+        assertEquals("#", outContent.toString());
     }
 
     @Test
