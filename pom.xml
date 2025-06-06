@@ -1,19 +1,56 @@
-<plugin>
-    <groupId>org.apache.maven.plugins</groupId>
-    <artifactId>maven-surefire-plugin</artifactId>
-    <version>${surefire.version}</version>
-    <configuration>
-        <printSummary>true</printSummary>
-        <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
-        <includes>
-            <include>**/*Test.java</include>
-            <include>**/*Tests.java</include>
-        </includes>
-        <systemPropertyVariables>
-            <java.util.logging.manager>org.apache.logging.log4j.jul.LogManager</java.util.logging.manager>
-        </systemPropertyVariables>
-        <forkCount>1</forkCount>
-        <reuseForks>false</reuseForks>
-        <!-- Removed debugForkedProcess -->
-    </configuration>
-</plugin>
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>v2.button.panic</groupId>
+    <artifactId>pbv2</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <name>pbv2</name>
+    <url>http://www.example.com</url>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <surefire.version>2.22.2</surefire.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.9.2</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>${surefire.version}</version>
+            <configuration>
+                <printSummary>true</printSummary>
+                <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+                <includes>
+                    <include>**/*Test.java</include>
+                    <include>**/*Tests.java</include>
+                </includes>
+                <systemPropertyVariables>
+                    <java.util.logging.manager>org.apache.logging.log4j.jul.LogManager</java.util.logging.manager>
+                </systemPropertyVariables>
+                <forkCount>1</forkCount>
+                <reuseForks>false</reuseForks>
+                <!-- Removed debugForkedProcess -->
+            </configuration>
+        </plugin>
+
+    </build>
+
+    
+
+</project>
