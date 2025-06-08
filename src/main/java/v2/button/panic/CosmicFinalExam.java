@@ -94,6 +94,8 @@ public class CosmicFinalExam {
                 throw new IllegalArgumentException("you need at least 27-orglings");
             }
             balance -= 27;
+        } else {
+            balance -= 12;
         }
 
         return balance;
@@ -106,6 +108,9 @@ public class CosmicFinalExam {
      */
     public static double lawOfGravity(double m1, double m2, double r) {
         // TODO: Implement gravitational force calculation
+        if (r == 0) {
+            throw new IllegalArgumentException("cant divide by 0.");
+        }
         
         return 6.67430e-11 * (m1 * m2) / (r * r);
     }
