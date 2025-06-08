@@ -47,7 +47,11 @@ public class CosmicFinalExam {
      */
     public static double tagIn(double balance) {
         // TODO: Implement tagIn fare deduction logic
-        return 0;
+        if (balance < 12) {
+            throw new IllegalArgumentException("Insufficient funds case");
+        }
+
+        return balance -= 12;
     }
 
     /**
