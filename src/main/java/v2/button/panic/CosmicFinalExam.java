@@ -124,7 +124,11 @@ public class CosmicFinalExam {
      */
     public static double velocity(double distance, double time) {
         // TODO: Implement velocity calculation
-        return 0;
+        if (time <= 0) {
+            throw new IllegalArgumentException("cannot divide by zero.");
+        }
+
+        return distance / time;
     }
 
     /**
