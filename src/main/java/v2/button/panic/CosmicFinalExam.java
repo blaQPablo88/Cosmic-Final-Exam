@@ -76,7 +76,27 @@ public class CosmicFinalExam {
      */
     public static double tagOut(String destination, double balance) throws IllegalArgumentException {
         // TODO: Implement tagOut fare deduction logic based on destination
-        return 0;
+
+        if (destination.equalsIgnoreCase("Unknown")) {
+            return balance;
+        } else if (destination.equalsIgnoreCase("Zenthros")) {
+            if (balance < 20) {
+                throw new IllegalArgumentException("you need at least 20-orglings");
+            }
+            balance -= 20;
+        } else if (destination.equalsIgnoreCase("Kryndor")) {
+            if (balance < 22) {
+                throw new IllegalArgumentException("you need at least 22-orglings");
+            }
+            balance -= 22;
+        } else if (destination.equalsIgnoreCase("Bryxaria")) {
+            if (balance < 27) {
+                throw new IllegalArgumentException("you need at least 27-orglings");
+            }
+            balance -= 27;
+        }
+
+        return balance;
     }
 
     /**

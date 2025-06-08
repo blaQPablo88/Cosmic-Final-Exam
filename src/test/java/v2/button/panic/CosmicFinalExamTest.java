@@ -41,7 +41,7 @@ public class CosmicFinalExamTest {
 
         // Insufficient funds case (should NOT go negative)
         assertThrows(IllegalArgumentException.class, () -> {
-            CosmicFinalExam.transfer(0.0);
+            CosmicFinalExam.tagIn(0.0);
         }, "Should throw if balance < 12");
 
         // Large number case
