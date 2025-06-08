@@ -25,10 +25,20 @@ package v2.button.panic;
 public class CosmicFinalExam {
 
     /**
+     * Main method to see output
+     */
+    public static void main(String[] args) {
+        welcome(3);
+    }
+
+    /**
      * You must scream "Fanta" n times.
      */
     public static void welcome(int n) {
         // TODO: Implement method to print "Fanta" n times
+        for(int i = 1; i <= n; i++) {
+            System.out.println("Fanta");
+        }
     }
 
     /**

@@ -18,7 +18,7 @@ public class CosmicFinalExamTest {
         ByteArrayOutputStream outContent = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outContent));
         CosmicFinalExam.welcome(3);
-        assertEquals("Fanta\nFanta\nFanta\n", outContent.toString());
+        assertEquals("Fanta\r\nFanta\r\nFanta\r\n", outContent.toString());
 
         // Test zero case
         outContent.reset();
