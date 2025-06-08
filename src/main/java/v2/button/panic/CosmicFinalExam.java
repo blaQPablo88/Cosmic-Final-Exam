@@ -59,7 +59,11 @@ public class CosmicFinalExam {
      */
     public static double transfer(double balance) {
         // TODO: Implement transfer fare deduction logic
-        return 0;
+        if (balance < 2) {
+            throw new IllegalArgumentException("you need at least 2-orglings");
+        }
+        balance -= 2;
+        return balance;
     }
 
     /**
